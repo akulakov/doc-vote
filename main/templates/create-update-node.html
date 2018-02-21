@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.green { color: green }
+.red { color: red }
+.selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
+</style>
+
+<form action="" method="post" accept-charset="utf-8">{% csrf_token %}
+    {{ form.as_p }}
+    <p> <input type="submit" value="Submit" /> </p>
+</form>
+
+{% endblock %}

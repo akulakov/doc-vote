@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.green { color: green }
+.red { color: red }
+.selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
+</style>
+
+<h3>{{ page.name }}</h3>
+
+{% for node in nodes %}
+
+    <div class='node'>{{ node.body_rendered|safe }} 
+    {% with node.score as score %}
+        <span class='score'>
+        {% if score > 0 %}
+            <span class='green'>+{{ score }}</span>
+        {% elif score < 0 %}
+            <span class='red'>{{ score }}</span>
+        {% endif %}
+        </span>
+    {% endwith %}
+
+    <span>{{ node.vote_links|safe }}</span>
+
+    <span><a href="{% url 'delete_node' page.pk node.pk %}">delete</a></span>
+
+    <span><a href="{% url 'create_update_node' page.pk node.pk %}after/">{% if not forloop.last %}Insert {% endif %}New Node</a></span>
+
+    <div><a href="{% url 'node' node.pk %}">comments ({{ node.comments.count }})</a></div>
+
+    <div>
+    {% if not forloop.last %}<a href="{% url 'move_node' page.pk node.pk 'down' %}">down ↓</a> {% endif %}
+    {% if not forloop.first %}<a href="{% url 'move_node' page.pk node.pk 'up' %}">up ↑</a> {% endif %}
+    </div>
+    </div>
+    
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.green { color: green }
+.red { color: red }
+.selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
+</style>
+
+<h3>Confirm Delete</h3>
+
+{{ node.body_rendered|safe }}
+
+<form action="" method="post" accept-charset="utf-8">{% csrf_token %}
+<p><input type="submit" value="Confirm" /></p>
+</form>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.green { color: green }
+.red { color: red }
+.selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
+</style>
+
+<h3>Edit Comment</h3>
+
+<form action="" method="post" accept-charset="utf-8">{% csrf_token %}
+
+{{ form.body }}
+
+<p><input type="submit" value="Submit" /></p>
+</form>
+
+{% endblock %}

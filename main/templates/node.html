@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+.green { color: green }
+.red { color: red }
+.selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
+</style>
+
+<h3>Node Comments</h3>
+
+{{ node.body_rendered|safe }}
+
+{% for comment in comments %}
+
+    <div class='node'>
+    <span>{{ comment.user }} at {{ comment.created }}</span>
+    {{ comment.body_rendered|safe }} 
+        <span><a href="{% url 'create_update_comment' node_pk=node.pk pk=comment.pk %}">Edit</a></span>
+    </div>
+    
+{% endfor %}
+
+<form action="{% url 'create_update_comment' node_pk=node.pk %}" method="post" accept-charset="utf-8">{% csrf_token %}
+
+{{ form.as_p }}
+
+<p><input type="submit" value="Submit" /></p>
+</form>
+
+<a href="{% url 'page' node.page.pk %}"><< back to page</a>
+
+{% endblock %}
