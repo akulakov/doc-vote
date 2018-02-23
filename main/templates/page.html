@@ -1,30 +1,38 @@
 {% extends 'base.html' %}
 {% block content %}
-
+<script src='/static/jquery-3.3.1.min.js'></script>
 <style>
 .green { color: green }
 .red { color: red }
 .selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
 </style>
 
+<div class='page' id='{{ page.pk }}'></div>
+
 <h3>{{ page.name }}</h3>
 
 {% for node in nodes %}
 
-    <div class='node'>{{ node.body_rendered|safe }} 
+    <div class='node'>
+
+    <div class='node-content'>{{ node.body_rendered|safe }} </div>
+
     {% with node.score as score %}
         <span class='score'>
         {% if score > 0 %}
-            <span class='green'>+{{ score }}</span>
+            <span class='val green'>+{{ score }}</span>
         {% elif score < 0 %}
-            <span class='red'>{{ score }}</span>
+            <span class='val red'>{{ score }}</span>
         {% endif %}
         </span>
+
+        <button class='edit' id='{{ node.pk }}'>EDIT</button>
+        <button class='save' id='{{ node.pk }}' style='display:none;'>SAVE</button>
+        <button class='vote-down' value='-' id='{{ node.pk }}'>-</button>
+        <button class='vote-up' value='+' id='{{ node.pk }}'>+</button>
     {% endwith %}
 
-    <span>{{ node.vote_links|safe }}</span>
-
-    <span><a href="{% url 'delete_node' page.pk node.pk %}">delete</a></span>
+    <span><a class='delete' id='{{ node.pk }}' href="#{# url 'delete_node' page.pk node.pk #}">delete</a></span>
 
     <span><a href="{% url 'create_update_node' page.pk node.pk %}after/">{% if not forloop.last %}Insert {% endif %}New Node</a></span>
 
@@ -37,5 +45,7 @@
     </div>
     
 {% endfor %}
+
+<script type='text/javascript' src='/static/doc_vote.js'></script>
 
 {% endblock %}

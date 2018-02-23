@@ -6,6 +6,11 @@ from django.urls import reverse
 
 from django.views.generic import (DetailView, UpdateView, DeleteView, FormView, View, ListView,
                                   CreateView)
+from django.views.generic.detail import SingleObjectMixin
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 from .models import Page, Vote, Node, Comment
 from .forms import CommentForm
@@ -44,15 +49,32 @@ class PageView(DetailView):
         kwargs['nodes'] = nodes
         return super().get_context_data(**kwargs)
 
-
-class NodeView(DetailView):
+@method_decorator(csrf_exempt, name='dispatch')
+class AjaxNodeView(SingleObjectMixin, View):
     model = Node
-    context_object_name = 'node'
-    template_name = 'node.html'
 
-    def get_context_data(self, **kwargs):
-        kwargs.update(form=CommentForm(), view=self, comments=self.object.comments.all())
-        return super().get_context_data(**kwargs)
+    def delete(self, request, *args, **kwargs):
+        self.get_object().delete()
+        return JsonResponse(dict(success=True))
+
+    def get(self, request, *args, **kwargs):
+        return JsonResponse(dict(body=self.get_object().body))
+
+    def post(self, request, *args, **kwargs):
+        node = self.get_object()
+        node.body = self.request.POST.get('body')
+        node.save()
+        return JsonResponse(dict(body=node.body_rendered, success=True))
+
+
+# class NodeView(DetailView):
+#     model = Node
+#     context_object_name = 'node'
+#     template_name = 'node.html'
+
+#     def get_context_data(self, **kwargs):
+#         kwargs.update(form=CommentForm(), view=self, comments=self.object.comments.all())
+#         return super().get_context_data(**kwargs)
 
 
 class CreateUpdateCommentView(UpdateView):
@@ -66,13 +88,47 @@ class CreateUpdateCommentView(UpdateView):
             return self.model.objects.get(pk=pk)
 
     def form_valid(self, form):
-        print ("in form_valid()")
         node = get_object_or_404(Node, pk=self.kwargs.get('node_pk'))
         comment = form.save(commit=False)
         comment.user = self.request.user
         comment.node = node
         comment.save()
         return redirect(node.get_absolute_url())
+
+
+class CreateUpdateNodeAjaxView(UpdateView):
+    model = Node
+    fields = ('body',)
+    def get_object(self, queryset=None):
+        if self.after:
+            return None
+        pk = self.kwargs.get('node_pk')
+        if pk:
+            return self.model.objects.get(pk=pk)
+
+    def form_valid(self, form):
+        node = form.save(commit=False)
+        node.creator = self.request.user
+        page = get_object_or_404(Page, pk=self.kwargs.get('pk'))
+
+        pk = self.kwargs.get('node_pk')
+        last = self.model.objects.get(pk=pk)
+
+        order = None
+        next = Node.objects.filter(order__gt=last.order).first()
+        if next:
+            if (next.order - last.order) <= 1:
+                Node.reorder_after(last)
+                order = last.order + 10
+            else:
+                order = last.order + int((next.order - last.order)/2)
+
+        if not order:
+            order = Node.objects.filter(page=page).last().order + 20
+        node.order = order
+        node.page = page
+        node.save()
+        return redirect(page.get_absolute_url())
 
 
 class CreateUpdateNodeView(UpdateView):
@@ -112,18 +168,19 @@ class CreateUpdateNodeView(UpdateView):
         node.save()
         return redirect(page.get_absolute_url())
 
-class DeleteNodeView(DeleteView):
-    model = Node
-    page_pk = None
+# class DeleteNodeView(DeleteView):
+#     model = Node
+#     page_pk = None
 
-    def get_success_url(self):
-        return reverse('page', kwargs=dict(pk=self.kwargs.get('page_pk')))
+#     def get_success_url(self):
+#         return reverse('page', kwargs=dict(pk=self.kwargs.get('page_pk')))
 
+@method_decorator(csrf_exempt, name='dispatch')
 class VoteView(DetailView):
     model = Node
     template_name = 'none'
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         node = self.get_object()
         plus = int(self.kwargs.get('plus'))
         page_pk = self.kwargs.get('page_pk')
@@ -131,7 +188,8 @@ class VoteView(DetailView):
                 or Vote(node=node, user=self.request.user)
         vote.plus = bool(plus)
         vote.save()
-        return redirect(reverse('page', kwargs=dict(pk=page_pk)))
+        return JsonResponse(dict(score=vote.node.score))
+        # return redirect(reverse('page', kwargs=dict(pk=page_pk)))
 
 class MoveNodeView(DetailView):
     model = Node
