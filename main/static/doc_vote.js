@@ -8,6 +8,8 @@ $( document ).ready(function() {
         let url = '/'+page+'/vote/'+id+'/'+event.data.dir+'/';
         let $this = $(this);
 
+        if (!$('.username').val()) alert('You need to login in order to vote.')
+
         $.ajax({ 'type':'POST', 'url':url }).done(function(data) {
             let val = $this.parent().find('.val');
 

@@ -57,6 +57,7 @@ class PageView(DetailView):
         kwargs.update(dict(nodes=nodes,
                            is_staff=user.is_authenticated and user.is_staff,
                            is_authenticated=user.is_authenticated,
+                           user=user,
                            ))
         return super().get_context_data(**kwargs)
 

@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-<script src='/static/jquery-3.3.1.min.js'></script>
 <style>
 .green { color: green }
 .red { color: red }
@@ -18,6 +17,7 @@ textarea { width: 500px; height: 80px; }
 </style>
 
 <div class='page' id='{{ page.pk }}'></div>
+<div class='username' style='display:none'>{{ user.username }}</div>
 
 <h3>{{ page.name }}</h3>
 
@@ -50,10 +50,10 @@ textarea { width: 500px; height: 80px; }
         </div>
     {% endwith %}
 
-    {% if is_authenticated and not is_staff %}
+    {# if is_authenticated and not is_staff #}
     <button class='vote-down' value='-' id='{{ node.pk }}'>-</button>
     <button class='vote-up' value='+' id='{{ node.pk }}'>+</button>
-    {% endif %}
+    {# endif #}
 
     {% if is_staff %}
     <div class='actions'>
@@ -91,6 +91,5 @@ textarea { width: 500px; height: 80px; }
 {% endfor %}
 </div>
 
-<script type='text/javascript' src='/static/doc_vote.js'></script>
 
 {% endblock %}

@@ -29,6 +29,13 @@
         </div>
         <!-- /#sidebar-wrapper -->
 
+        <div style='margin-left: 50px'>
+        {% if request.user.is_authenticated %}
+            <a href="{% url 'logout' %}">logout</a> {% else %}
+            <a href="{% url 'login' %}">login</a>
+        {% endif %}
+        </div>
+
         <!-- Page Content -->
         <div id="page-content-wrapper">
             <div class="container-fluid">
@@ -45,6 +52,8 @@
     <!-- Bootstrap core JavaScript -->
     <!-- <script src="vendor/jquery/jquery.min.js"></script> -->
     <!-- <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script> -->
+    <script src='/static/jquery-3.3.1.min.js'></script>
+    <script type='text/javascript' src='/static/doc_vote.js'></script>
 
     <!-- Menu Toggle Script -->
     <script>

@@ -13,7 +13,7 @@ urlpatterns = [
     # path('<int:page_pk>/delete-node/<int:pk>/', views.DeleteNodeView.as_view(), name='delete_node'),
     # path('/vote/', views.VoteView.as_view(), name='vote'),
     url(r'^login/$', auth_views.login, name='login'),
-    url(r'^logout/$', auth_views.logout, name='logout'),
+    url(r'^logout/$', auth_views.logout, dict(next_page='/'), name='logout'),
 
     path('<int:page_pk>/vote/<int:pk>/<int:plus>/', views.VoteView.as_view(), name='vote'),
     path('<int:page_pk>/vote/<int:pk>/<str:dir>/', views.MoveNodeView.as_view(), name='move_node'),
