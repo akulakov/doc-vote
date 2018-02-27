@@ -5,19 +5,38 @@
 .green { color: green }
 .red { color: red }
 .selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
+.node { padding: 7px ; border: 0px solid #e7e7e7; width: 800px; margin-left: 15px; padding-left: 10px; margin-bottom: 3px }
+.clear { clear: both }
+.comments { border: 0px solid; width: 130px; float: right }
+.score { padding-left: 5px }
+.left { float: left }
+.actions { border: 0px solid }
+.right-pane { float: right; border: 0px solid green }
+.act-hover { height: 58px }
+
+textarea { width: 500px; height: 80px; }
 </style>
 
 <div class='page' id='{{ page.pk }}'></div>
 
 <h3>{{ page.name }}</h3>
 
+<div id='content'>
 {% for node in nodes %}
+
+<!-- IMPORTANT!! -->
+<!-- The following code in the `node` div is mostly duplicated in `new_node_fragment.html`, any changes should be reflected there as well -->
+<!-- IMPORTANT!! -->
 
     <div class='node'>
 
     <div class='node-content'>{{ node.body_rendered|safe }} </div>
+    <button class='save' id='{{ node.pk }}' style='display:none;'>Save</button>
 
+    <div class='right-pane'>
     {% with node.score as score %}
+        <div>
+        <div class='clear'></div>
         <span class='score'>
         {% if score > 0 %}
             <span class='val green'>+{{ score }}</span>
@@ -25,26 +44,50 @@
             <span class='val red'>{{ score }}</span>
         {% endif %}
         </span>
-
-        <button class='edit' id='{{ node.pk }}'>EDIT</button>
-        <button class='save' id='{{ node.pk }}' style='display:none;'>SAVE</button>
-        <button class='vote-down' value='-' id='{{ node.pk }}'>-</button>
-        <button class='vote-up' value='+' id='{{ node.pk }}'>+</button>
+        <div class='clear'></div>
+        </div>
     {% endwith %}
 
-    <span><a class='delete' id='{{ node.pk }}' href="#{# url 'delete_node' page.pk node.pk #}">delete</a></span>
+    {% if is_authenticated and not is_staff %}
+    <button class='vote-down' value='-' id='{{ node.pk }}'>-</button>
+    <button class='vote-up' value='+' id='{{ node.pk }}'>+</button>
+    {% endif %}
 
-    <span><a href="{% url 'create_update_node' page.pk node.pk %}after/">{% if not forloop.last %}Insert {% endif %}New Node</a></span>
+    {% if is_staff %}
+    <div class='actions'>
+        <div class='clear'></div>
+        <div class='act-hover'>.. actions ..</div>
+        <div class='clear'></div>
+        <div class='inner' style='display:none'>
+            <button class='edit' id='{{ node.pk }}'>Edit</button>
 
-    <div><a href="{% url 'node' node.pk %}">comments ({{ node.comments.count }})</a></div>
+            <button class='delete' id='{{ node.pk }}'>Delete</button>
+            <button class='add-node' id='{{ node.pk }} 'href="{% url 'create_update_node' page.pk node.pk %}after/">{% if not forloop.last %}Insert {% endif %}New Node</button>
 
-    <div>
-    {% if not forloop.last %}<a href="{% url 'move_node' page.pk node.pk 'down' %}">down ↓</a> {% endif %}
-    {% if not forloop.first %}<a href="{% url 'move_node' page.pk node.pk 'up' %}">up ↑</a> {% endif %}
+            <div class='move'>
+                <div class='clear'></div>
+                {% if not forloop.last %}<button class='down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</button> {% endif %}
+                {% if not forloop.first %}<button class='up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</button> {% endif %}
+            </div>
+        </div>
     </div>
+    <div class='clear'></div>
+    {% endif %}
+
+    <div class='clear'></div>
+    <div class='comments'>
+        <a href="{% url 'node' node.pk %}">comments ({{ node.comments.count }})</a>
     </div>
+    <div class='clear'></div>
+
+    </div>  <!-- right pane -->
+    <div class='clear'></div>
+
+    </div>  <!-- node -->
+    <div class='clear'></div>
     
 {% endfor %}
+</div>
 
 <script type='text/javascript' src='/static/doc_vote.js'></script>
 

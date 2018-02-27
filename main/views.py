@@ -11,6 +11,9 @@ from django.views.generic.detail import SingleObjectMixin
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.template import loader, Context
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 
 from .models import Page, Vote, Node, Comment
 from .forms import CommentForm
@@ -25,10 +28,11 @@ class PageView(DetailView):
     template_name = 'page.html'
 
     def get_context_data(self, **kwargs):
+        user = self.request.user
         nodes = []
         for node in self.object.nodes.all():
             user_vote = Vote.objects.filter(
-                                         user=self.request.user,
+                                         user=user if user.is_authenticated else None,
                                          node=node,
                                          ).first()
             minus_url = reverse('vote', kwargs=dict(pk=node.pk,
@@ -46,9 +50,14 @@ class PageView(DetailView):
                 node.vote_links = vote_links.format(minus_class='selected', plus_class='', minus_url=minus_url, plus_url=plus_url)
 
             nodes.append(node)
-        kwargs['nodes'] = nodes
+        kwargs.update(dict(nodes=nodes,
+                           is_staff=user.is_authenticated and user.is_staff,
+                           is_authenticated=user.is_authenticated,
+                           ))
         return super().get_context_data(**kwargs)
 
+
+@method_decorator(staff_member_required, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class AjaxNodeView(SingleObjectMixin, View):
     model = Node
@@ -67,16 +76,19 @@ class AjaxNodeView(SingleObjectMixin, View):
         return JsonResponse(dict(body=node.body_rendered, success=True))
 
 
-# class NodeView(DetailView):
-#     model = Node
-#     context_object_name = 'node'
-#     template_name = 'node.html'
+class NodeView(DetailView):
+    model = Node
+    context_object_name = 'node'
+    template_name = 'node.html'
 
-#     def get_context_data(self, **kwargs):
-#         kwargs.update(form=CommentForm(), view=self, comments=self.object.comments.all())
-#         return super().get_context_data(**kwargs)
+    def get_context_data(self, **kwargs):
+        kwargs.update(view=self, comments=self.object.comments.all())
+        if self.request.user.is_authenticated:
+            kwargs.update(form=CommentForm())
+        return super().get_context_data(**kwargs)
 
 
+@method_decorator(login_required, name='dispatch')
 class CreateUpdateCommentView(UpdateView):
     model = Comment
     template_name = 'create-update-comment.html'
@@ -96,9 +108,13 @@ class CreateUpdateCommentView(UpdateView):
         return redirect(node.get_absolute_url())
 
 
-class CreateUpdateNodeAjaxView(UpdateView):
+@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
+class AjaxCreateUpdateNodeView(UpdateView):
     model = Node
     fields = ('body',)
+    after = False
+
     def get_object(self, queryset=None):
         if self.after:
             return None
@@ -128,7 +144,10 @@ class CreateUpdateNodeAjaxView(UpdateView):
         node.order = order
         node.page = page
         node.save()
-        return redirect(page.get_absolute_url())
+        t = loader.get_template('new_node_fragment.html')
+        c = dict(page=page, node=node)
+        rendered = t.render(c)
+        return JsonResponse(dict(body=rendered))
 
 
 class CreateUpdateNodeView(UpdateView):
@@ -175,6 +194,7 @@ class CreateUpdateNodeView(UpdateView):
 #     def get_success_url(self):
 #         return reverse('page', kwargs=dict(pk=self.kwargs.get('page_pk')))
 
+@method_decorator(login_required, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class VoteView(DetailView):
     model = Node
@@ -191,6 +211,7 @@ class VoteView(DetailView):
         return JsonResponse(dict(score=vote.node.score))
         # return redirect(reverse('page', kwargs=dict(pk=page_pk)))
 
+@method_decorator(staff_member_required, name='dispatch')
 class MoveNodeView(DetailView):
     model = Node
     template_name = 'none'

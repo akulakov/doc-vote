@@ -1,0 +1,46 @@
+<div class='node'>
+
+<div class='node-content'>{{ node.body_rendered|safe }} </div>
+<button class='save' id='{{ node.pk }}' style='display:none;'>Save</button>
+
+<div class='right-pane'>
+{% with node.score as score %}
+    <div>
+    <div class='clear'></div>
+    <span class='score'>
+    <span class='val'></span>
+    </span>
+    <div class='clear'></div>
+    </div>
+{% endwith %}
+
+<div class='actions'>
+    <div class='clear'></div>
+    <div class='act-hover'>.. actions ..</div>
+    <div class='clear'></div>
+    <div class='inner' style='display:none'>
+        <button class='edit' id='{{ node.pk }}'>Edit</button>
+
+        <button class='delete' id='{{ node.pk }}'>Delete</button>
+        <button class='add-node' id='{{ node.pk }} 'href="{% url 'create_update_node' page.pk node.pk %}after/">New Node</button>
+
+        <div class='move'>
+            <div class='clear'></div>
+            <button class='down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</button>
+            <button class='up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</button>
+        </div>
+    </div>
+</div>
+<div class='clear'></div>
+
+<div class='clear'></div>
+<div class='comments'>
+    <a href="{% url 'node' node.pk %}">comments ({{ node.comments.count }})</a>
+</div>
+<div class='clear'></div>
+
+</div>  <!-- right pane -->
+<div class='clear'></div>
+
+</div>  <!-- node -->
+<div class='clear'></div>

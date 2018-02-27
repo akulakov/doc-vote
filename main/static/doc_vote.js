@@ -1,5 +1,6 @@
 
 $( document ).ready(function() {
+    let page = $('.page').attr('id');
 
     function vote(event) {
         let page = $('.page').attr('id');
@@ -32,12 +33,13 @@ $( document ).ready(function() {
     $('.edit').click(function() {
         let $this = $(this);
         $this.hide();
-        $this.parent().find('.save').show();
-        let content = $(this).parent().find('.node-content');
-        let id = $(this).attr('id');
+        let $node = $this.parent().parent().parent().parent();
+        $node.find('.save').show();
+        let content = $node.find('.node-content');
+        let id = $this.attr('id');
         let url = '/ajax-node/'+id+'/';
         $.ajax({ 'type':'GET', 'url':url }).done(function(data) {
-            let content = $this.parent().find('.node-content');
+            let content = $node.find('.node-content');
             content.html('<textarea style="width:500px; height:80px">' + data.body + '</textarea>');
         });
     });
@@ -45,14 +47,15 @@ $( document ).ready(function() {
     $('.save').click(function() {
         let $this = $(this);
         $this.hide();
-        $this.parent().find('.edit').show();
-        let content = $(this).parent().find('.node-content textarea').val();
+        let $node = $this.parent();
+        $node.find('.edit').show();
+
+        let content = $node.find('.node-content textarea').val();
         let id = $(this).attr('id');
         let url = '/ajax-node/'+id+'/';
         $.post(url, {'body': content}).done(function(data) {
-            let content = $this.parent().find('.node-content');
+            let content = $node.find('.node-content');
             content.html(data.body);
-            //content.contents().unwrap();
         });
     });
 
@@ -60,13 +63,53 @@ $( document ).ready(function() {
         let $this = $(this);
         let id = $(this).attr('id');
         let url = '/ajax-node/'+id+'/';
-        $this.parent().parent().css('background-color', '#966');
-        let yes = confirm("Delete highlighted node? All of node's comments and votes will also be permanently deleted.");
-        if (yes) {
-            $.ajax({'type':'delete', 'url':url}).done(function(data) {
-                $this.parent().parent().remove();
-            });
-        }
+        $this.parent().parent().parent().parent().css('background-color', '#f7cec0');
+        setTimeout(function() {
+            let yes = confirm("Delete highlighted node? All of node's comments and votes will also be permanently deleted.");
+            if (yes) {
+                $.ajax({'type':'delete', 'url':url}).done(function(data) {
+                    $this.parent().parent().parent().parent().remove();
+                });
+            }
+            $this.parent().parent().parent().parent().css('background-color', '#fff');
+
+        }, 50);
     });
+
+    $('.add-node').click(function() {
+        let $this = $(this);
+        let id = $this.attr('id');
+        let $node = $this.parent().parent().parent().parent();
+        let $div = $node.after('<div class="new-node"><h4>New Node</h4><textarea id='+id+
+            '></textarea><div class="clear"></div><button class="save-new left">Save</button><button class="cancel-add left" href="#">Cancel</button></div>');
+        setTimeout(function() {
+            $div.find('textarea').focus();
+        }, 50);
+        $('#content').on('click', 'button.cancel-add', function() {
+            $('.new-node').remove()
+        });
+
+        $('#content').on('click', 'button.save-new', function() {
+            let $this = $(this);
+            let ta = $this.parent().find('textarea');
+            let id = ta.attr('id');
+            let url = '/'+page+'/ajax-create-update-node/'+id+'/after/';
+
+            $.post(url, {'body': ta.val()}).done(function(data) {
+                $('div.new-node').replaceWith(data.body);
+            });
+        });
+
+
+    });
+
+    $(document).on('mouseenter', '.actions', function () {
+        $(this).find(".inner").show();
+        $(this).find(".act-hover").hide();
+        }).on('mouseleave', '.actions', function () {
+            $(this).find(".inner").hide();
+            $(this).find(".act-hover").show();
+        });
+
 
 });
