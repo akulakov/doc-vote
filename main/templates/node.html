@@ -5,6 +5,7 @@
 .green { color: green }
 .red { color: red }
 .selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
+textarea { width: 400px; height: 80px }
 </style>
 
 <h3>Node Comments</h3>
@@ -14,20 +15,28 @@
 {% for comment in comments %}
 
     <div class='node'>
-    <span>{{ comment.user }} at {{ comment.created }}</span>
+    <span>
+        {{ comment.user }} at {{ comment.updated }}
+        {% if view.request.user.is_superuser or comment.user == view.request.user %}
+            <a href="{% url 'create_update_comment' node_pk=node.pk pk=comment.pk %}">edit</a>
+        {% endif %}
+    </span>
+
     {{ comment.body_rendered|safe }} 
-        <span><a href="{% url 'create_update_comment' node_pk=node.pk pk=comment.pk %}">Edit</a></span>
+
     </div>
     
 {% endfor %}
 
+{% if form %}
 <form action="{% url 'create_update_comment' node_pk=node.pk %}" method="post" accept-charset="utf-8">{% csrf_token %}
 
-{{ form.as_p }}
+{{ form.body }}
 
 <p><input type="submit" value="Submit" /></p>
 </form>
+{% endif %}
 
-<a href="{% url 'page' node.page.pk %}"><< back to page</a>
+<a href="{% url 'page' node.page.pk %}">&lt;&lt; back to page</a>
 
 {% endblock %}

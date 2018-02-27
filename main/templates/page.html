@@ -42,6 +42,8 @@ textarea { width: 500px; height: 80px; }
             <span class='val green'>+{{ score }}</span>
         {% elif score < 0 %}
             <span class='val red'>{{ score }}</span>
+        {% else %}
+            <span class='val'></span>
         {% endif %}
         </span>
         <div class='clear'></div>

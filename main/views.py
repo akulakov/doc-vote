@@ -5,7 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from django.views.generic import (DetailView, UpdateView, DeleteView, FormView, View, ListView,
-                                  CreateView)
+                                  CreateView, RedirectView)
 from django.views.generic.detail import SingleObjectMixin
 
 from django.http import JsonResponse
@@ -22,6 +22,10 @@ vote_links = """
 <a href='{minus_url}' class='{minus_class}'>-</a>
 <a href='{plus_url}' class='{plus_class}'>+</a>
 """
+
+class MainRedirectView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        return Page.objects.all().first().get_absolute_url()
 
 class PageView(DetailView):
     model = Page
@@ -88,6 +92,9 @@ class NodeView(DetailView):
         return super().get_context_data(**kwargs)
 
 
+class PermissionError(Exception):
+    pass
+
 @method_decorator(login_required, name='dispatch')
 class CreateUpdateCommentView(UpdateView):
     model = Comment
@@ -97,7 +104,10 @@ class CreateUpdateCommentView(UpdateView):
     def get_object(self, queryset=None):
         pk = self.kwargs.get('pk')
         if pk:
-            return self.model.objects.get(pk=pk)
+            obj = self.model.objects.get(pk=pk)
+            if (obj.user != self.request.user) and not self.request.user.is_superuser:
+                raise PermissionError("You don't have permissions to edit this comment")
+            return obj
 
     def form_valid(self, form):
         node = get_object_or_404(Node, pk=self.kwargs.get('node_pk'))

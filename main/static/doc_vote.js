@@ -63,15 +63,16 @@ $( document ).ready(function() {
         let $this = $(this);
         let id = $(this).attr('id');
         let url = '/ajax-node/'+id+'/';
-        $this.parent().parent().parent().parent().css('background-color', '#f7cec0');
+        let $node = $this.parent().parent().parent().parent();
+        $node.css('background-color', '#f7cec0');
         setTimeout(function() {
             let yes = confirm("Delete highlighted node? All of node's comments and votes will also be permanently deleted.");
             if (yes) {
                 $.ajax({'type':'delete', 'url':url}).done(function(data) {
-                    $this.parent().parent().parent().parent().remove();
+                    $node.remove();
                 });
             }
-            $this.parent().parent().parent().parent().css('background-color', '#fff');
+            $this.node.css('background-color', '#fff');
 
         }, 50);
     });
