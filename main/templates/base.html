@@ -31,7 +31,9 @@
 
         <div style='margin-left: 50px'>
         {% if request.user.is_authenticated %}
-            <a href="{% url 'logout' %}">logout</a> {% else %}
+            hello, {{ request.user.get_full_name|default:request.user.username }}
+            <a href="{% url 'logout' %}">logout</a>
+            {% else %}
             <a href="{% url 'login' %}">login</a>
         {% endif %}
         </div>

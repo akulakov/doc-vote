@@ -223,6 +223,7 @@ class ClearScoreView(DetailView):
         node = self.get_object()
         node.score = 0
         node.save()
+        node.votes.all().delete()
         return JsonResponse(dict(success=True))
 
 @method_decorator(staff_member_required, name='dispatch')

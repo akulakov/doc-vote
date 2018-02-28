@@ -66,9 +66,9 @@ $( document ).ready(function() {
         let id = $(this).attr('id');
         let url = '/ajax-node/'+id+'/clear-score/';
         let $node = $this.parent().parent().parent().parent();
-        $node.css('background-color', '#cef7c0');
+        $node.css('background-color', '#f7cec0');
         setTimeout(function() {
-            let yes = confirm("Clear score of the highlighted node? This change cannot be reversed.");
+            let yes = confirm("Clear score of the highlighted node? This will remove all votes related to the node; this change cannot be reversed!");
             if (yes) {
                 $.ajax({'type':'post', 'url':url}).done(function(data) {
                     $node.find('.val').text('');
