@@ -26,7 +26,7 @@ have the lowest scores).
 
 ## Installation and Setup
 
-DocVote is a Django app that works with Django 2.0.3+ and can be installed as any other
+DocVote is a Django app that works with Django 2.0.2+ and can be installed as any other
 Django app. You will need to self-host it. Refer to your hosting service docs on how to set
 up Django, database and add an app.
 
