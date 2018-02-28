@@ -23,6 +23,9 @@ vote_links = """
 <a href='{plus_url}' class='{plus_class}'>+</a>
 """
 
+class PermissionError(Exception):
+    pass
+
 class MainRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         return Page.objects.all().first().get_absolute_url()
@@ -93,9 +96,6 @@ class NodeView(DetailView):
         return super().get_context_data(**kwargs)
 
 
-class PermissionError(Exception):
-    pass
-
 @method_decorator(login_required, name='dispatch')
 class CreateUpdateCommentView(UpdateView):
     model = Comment
@@ -117,6 +117,18 @@ class CreateUpdateCommentView(UpdateView):
         comment.node = node
         comment.save()
         return redirect(node.get_absolute_url())
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class DeleteCommentView(DeleteView):
+    model = Comment
+    template_name = 'confirm-delete-comment.html'
+
+    def post(self, request, *args, **kwargs):
+        obj = self.get_object()
+        node = obj.node
+        obj.delete()
+        return redirect(reverse('node', kwargs=dict(pk=node.pk)))
 
 
 @method_decorator(staff_member_required, name='dispatch')

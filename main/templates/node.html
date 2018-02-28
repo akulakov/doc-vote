@@ -20,6 +20,9 @@ textarea { width: 400px; height: 80px }
         {% if view.request.user.is_superuser or comment.user == view.request.user %}
             <a href="{% url 'create_update_comment' node_pk=node.pk pk=comment.pk %}">edit</a>
         {% endif %}
+        {% if view.request.user.is_staff or comment.user == view.request.user %}
+            <a href="{% url 'delete_comment' pk=comment.pk %}">delete</a>
+        {% endif %}
     </span>
 
     {{ comment.body_rendered|safe }} 

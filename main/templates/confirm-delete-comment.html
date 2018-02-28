@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>Delete Comment?</h3>
+
+{{ comment.body_rendered|safe }}
+
+<form action="" method="post" accept-charset="utf-8">{% csrf_token %}
+
+<p><input type="submit" value="Delete" /></p>
+</form>
+
+{% endblock %}

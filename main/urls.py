@@ -21,6 +21,7 @@ urlpatterns = [
     path('ajax-node/<int:pk>/clear-score/', views.ClearScoreView.as_view(), name='clear_score'),
     path('node/<int:pk>/', views.NodeView.as_view(), name='node'),
 
+    path('delete-comment/<int:pk>/', views.DeleteCommentView.as_view(), name='delete_comment'),
     path('<int:node_pk>/create-update-comment/<int:pk>/', views.CreateUpdateCommentView.as_view(), name='create_update_comment'),
     path('<int:node_pk>/create-update-comment/', views.CreateUpdateCommentView.as_view(), name='create_update_comment'),
 
