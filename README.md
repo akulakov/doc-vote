@@ -1,5 +1,5 @@
 # DocVote
-doc system with voting and comments
+DocVote is a documentation system with voting and comments.
 
 DocVote is a documentation system that allows voting and comments to be applied to each node
 (usually a paragraph or a snippet of code). The system stores each node as a database entry
