@@ -65,6 +65,6 @@ support for things like menus and tags.
 
 ## Screenshots
 
-https://github.com/akulakov/doc-vote/blob/master/screenshots/Screen%20Shot%202018-02-28%20at%2011.31.56%20AM.png
+!(https://github.com/akulakov/doc-vote/raw/master/screenshots/Screen%20Shot%202018-02-28%20at%2011.31.56%20AM.png)
 
-https://github.com/akulakov/doc-vote/blob/master/screenshots/Screen%20Shot%202018-02-28%20at%2011.32.27%20AM.png
+!(https://github.com/akulakov/doc-vote/raw/master/screenshots/Screen%20Shot%202018-02-28%20at%2011.32.27%20AM.png)
