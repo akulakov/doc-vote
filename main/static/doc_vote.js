@@ -84,7 +84,8 @@ $( document ).ready(function() {
         let id = $this.attr('id');
         let $node = $this.parent().parent().parent().parent();
         let $div = $node.after('<div class="new-node"><h4>New Node</h4><textarea id='+id+
-            '></textarea><div class="clear"></div><button class="save-new left">Save</button><button class="cancel-add left" href="#">Cancel</button></div>');
+            '></textarea><div class="clear"></div><button class="save-new left">Save</button>'+
+            '<button class="cancel-add left" href="#">Cancel</button></div><div class="clear"></div>');
         setTimeout(function() {
             $div.find('textarea').focus();
         }, 50);

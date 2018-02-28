@@ -4,13 +4,14 @@
 .green { color: green }
 .red { color: red }
 .selected { font-weight: bold; border: 1px solid #ddd; padding: 2px }
-.node { padding: 7px ; border: 0px solid #e7e7e7; width: 800px; margin-left: 15px; padding-left: 10px; margin-bottom: 3px }
+.node { padding: 7px ; border: 0px solid #e7e7e7; width: 800px; margin-left: 15px; padding-left: 10px; margin-bottom: 3px; display: flex }
+.node-content { width: 650px; border: 1px solid }
+.right-pane { border: 1px solid green; order: 1; padding-left: 8px }
 .clear { clear: both }
-.comments { border: 0px solid; width: 130px; float: right }
+.comments { border: 0px solid; width: 130px;  }
 .score { padding-left: 5px }
 .left { float: left }
 .actions { border: 0px solid }
-.right-pane { float: right; border: 0px solid green }
 .act-hover { height: 58px }
 
 textarea { width: 500px; height: 80px; }
@@ -36,7 +37,6 @@ textarea { width: 500px; height: 80px; }
     <div class='right-pane'>
     {% with node.score as score %}
         <div>
-        <div class='clear'></div>
         <span class='score'>
         {% if score > 0 %}
             <span class='val green'>+{{ score }}</span>
@@ -46,20 +46,17 @@ textarea { width: 500px; height: 80px; }
             <span class='val'></span>
         {% endif %}
         </span>
-        <div class='clear'></div>
         </div>
     {% endwith %}
 
-    {# if is_authenticated and not is_staff #}
+    {% if not is_staff %}
     <button class='vote-down' value='-' id='{{ node.pk }}'>-</button>
     <button class='vote-up' value='+' id='{{ node.pk }}'>+</button>
-    {# endif #}
+    {% endif %}
 
     {% if is_staff %}
     <div class='actions'>
-        <div class='clear'></div>
         <div class='act-hover'>.. actions ..</div>
-        <div class='clear'></div>
         <div class='inner' style='display:none'>
             <button class='edit' id='{{ node.pk }}'>Edit</button>
 
@@ -67,26 +64,20 @@ textarea { width: 500px; height: 80px; }
             <button class='add-node' id='{{ node.pk }} 'href="{% url 'create_update_node' page.pk node.pk %}after/">{% if not forloop.last %}Insert {% endif %}New Node</button>
 
             <div class='move'>
-                <div class='clear'></div>
                 {% if not forloop.last %}<button class='down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</button> {% endif %}
                 {% if not forloop.first %}<button class='up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</button> {% endif %}
             </div>
         </div>
     </div>
-    <div class='clear'></div>
     {% endif %}
 
-    <div class='clear'></div>
     <div class='comments'>
         <a href="{% url 'node' node.pk %}">comments ({{ node.comments.count }})</a>
     </div>
-    <div class='clear'></div>
 
     </div>  <!-- right pane -->
-    <div class='clear'></div>
 
     </div>  <!-- node -->
-    <div class='clear'></div>
     
 {% endfor %}
 </div>
