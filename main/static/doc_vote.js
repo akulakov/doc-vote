@@ -8,7 +8,7 @@ $( document ).ready(function() {
         let url = '/'+page+'/vote/'+id+'/'+event.data.dir+'/';
         let $this = $(this);
 
-        if (!$('.username').val()) alert('You need to login in order to vote.')
+        if (!$('.username').text()) alert('You need to login in order to vote.')
 
         $.ajax({ 'type':'POST', 'url':url }).done(function(data) {
             let val = $this.parent().find('.val');
@@ -59,6 +59,24 @@ $( document ).ready(function() {
             let content = $node.find('.node-content');
             content.html(data.body);
         });
+    });
+
+    $('#content').on('click', '.clear-score', function() {
+        let $this = $(this);
+        let id = $(this).attr('id');
+        let url = '/ajax-node/'+id+'/clear-score/';
+        let $node = $this.parent().parent().parent().parent();
+        $node.css('background-color', '#cef7c0');
+        setTimeout(function() {
+            let yes = confirm("Clear score of the highlighted node? This change cannot be reversed.");
+            if (yes) {
+                $.ajax({'type':'post', 'url':url}).done(function(data) {
+                    $node.find('.val').text('');
+                });
+            }
+            $node.css('background-color', '#fff');
+
+        }, 50);
     });
 
     $('#content').on('click', '.delete', function() {

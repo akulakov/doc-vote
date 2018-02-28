@@ -198,13 +198,6 @@ class CreateUpdateNodeView(UpdateView):
         node.save()
         return redirect(page.get_absolute_url())
 
-# class DeleteNodeView(DeleteView):
-#     model = Node
-#     page_pk = None
-
-#     def get_success_url(self):
-#         return reverse('page', kwargs=dict(pk=self.kwargs.get('page_pk')))
-
 @method_decorator(login_required, name='dispatch')
 @method_decorator(csrf_exempt, name='dispatch')
 class VoteView(DetailView):
@@ -220,7 +213,17 @@ class VoteView(DetailView):
         vote.plus = bool(plus)
         vote.save()
         return JsonResponse(dict(score=vote.node.score))
-        # return redirect(reverse('page', kwargs=dict(pk=page_pk)))
+
+@method_decorator(staff_member_required, name='dispatch')
+@method_decorator(csrf_exempt, name='dispatch')
+class ClearScoreView(DetailView):
+    model = Node
+
+    def post(self, request, *args, **kwargs):
+        node = self.get_object()
+        node.score = 0
+        node.save()
+        return JsonResponse(dict(success=True))
 
 @method_decorator(staff_member_required, name='dispatch')
 class MoveNodeView(DetailView):

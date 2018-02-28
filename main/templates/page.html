@@ -63,11 +63,10 @@ textarea { width: 500px; height: 80px; }
 
             <button class='delete' id='{{ node.pk }}'>Delete</button>
             <button class='add-node' id='{{ node.pk }} 'href="{% url 'create_update_node' page.pk node.pk %}after/">{% if not forloop.last %}Insert {% endif %}New Node</button>
+            <button class='clear-score' id='{{ node.pk }}'>Clear Score</button>
 
-            <div class='move'>
-                {% if not forloop.last %}<button class='down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</button> {% endif %}
-                {% if not forloop.first %}<button class='up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</button> {% endif %}
-            </div>
+            {% if not forloop.last %}<button class='down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</button> {% endif %}
+            {% if not forloop.first %}<button class='up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</button> {% endif %}
         </div>
     </div>
     {% endif %}
