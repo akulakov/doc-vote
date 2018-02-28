@@ -24,6 +24,12 @@ as the scope of needed changes can be easily defined and improvement for the giv
 be quantified (for example, updating 10 paragraphs in various parts of the documentation that
 have the lowest scores).
 
+## Installation and Setup
+
+DocVote is a Django app that works with Django 2.0.3+ and can be installed as any other
+Django app. You will need to self-host it. Refer to your hosting service docs on how to set
+up Django, database and add an app.
+
 ## Workflow for users of documentation
 
 Users will see a side pane that will show score, vote buttons, and a form for leaving
