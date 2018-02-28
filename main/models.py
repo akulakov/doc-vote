@@ -102,6 +102,7 @@ class Comment(TimeStamp, models.Model):
     node = models.ForeignKey(Node, on_delete=models.CASCADE, related_name='comments')
     body = models.TextField(max_length=5000)
     body_rendered = models.TextField(max_length=15000, blank=True, default='')
+    archived = models.BooleanField(default=False)
 
     def __str__(self):
         return self.body[:25] + '...'
