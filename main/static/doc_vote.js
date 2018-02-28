@@ -32,7 +32,7 @@ $( document ).ready(function() {
     $('.vote-down').click({ 'dir':0 }, vote);
     $('.vote-up').click({ 'dir':1 }, vote);
 
-    $('.edit').click(function() {
+    $('#content').on('click', '.edit', function() {
         let $this = $(this);
         $this.hide();
         let $node = $this.parent().parent().parent().parent();
@@ -46,7 +46,7 @@ $( document ).ready(function() {
         });
     });
 
-    $('.save').click(function() {
+    $('#content').on('click', '.save', function() {
         let $this = $(this);
         $this.hide();
         let $node = $this.parent();
@@ -61,7 +61,7 @@ $( document ).ready(function() {
         });
     });
 
-    $('.delete').click(function() {
+    $('#content').on('click', '.delete', function() {
         let $this = $(this);
         let id = $(this).attr('id');
         let url = '/ajax-node/'+id+'/';
@@ -79,7 +79,7 @@ $( document ).ready(function() {
         }, 50);
     });
 
-    $('.add-node').click(function() {
+    $('#content').on('click', '.add-node', function() {
         let $this = $(this);
         let id = $this.attr('id');
         let $node = $this.parent().parent().parent().parent();
