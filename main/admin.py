@@ -9,6 +9,9 @@ class PageAdmin(admin.ModelAdmin):
 class NodeAdmin(admin.ModelAdmin):
     list_display = ('to_str', 'order')
 
+    def log_addition(self, request, object, message):
+        return None
+
 class CommentAdmin(admin.ModelAdmin):
     pass
 

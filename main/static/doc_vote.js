@@ -12,6 +12,11 @@ $( document ).ready(function() {
 
         $.ajax({ 'type':'POST', 'url':url }).done(function(data) {
             let val = $this.parent().find('.val');
+            if ($this.hasClass('vote-up'))
+                $this.parent().find('.vote-down').removeClass('pressed');
+            else
+                $this.parent().find('.vote-up').removeClass('pressed');
+            $this.toggleClass('pressed');
 
             if (data.score < 0) {
                 val.removeClass('green');
@@ -92,7 +97,8 @@ $( document ).ready(function() {
                     $node.remove();
                 });
             }
-            $this.node.css('background-color', '#fff');
+            if ($this.node)
+                $this.node.css('background-color', '#fff');
 
         }, 50);
     });

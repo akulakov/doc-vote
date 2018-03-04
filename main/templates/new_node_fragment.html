@@ -26,8 +26,8 @@
 
         <div class='move'>
             <div class='clear'></div>
-            <button class='down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</button>
-            <button class='up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</button>
+            <a class='button move-down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</a>
+            <a class='button move-up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</a>
         </div>
     </div>
 </div>

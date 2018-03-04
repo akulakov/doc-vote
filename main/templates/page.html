@@ -13,6 +13,19 @@
 .left { float: left }
 .actions { border: 0px solid }
 .act-hover { height: 58px }
+.pressed { background-color: #aaa; border: 0px green; }
+
+.button {
+    font: bold 11px Arial;
+    text-decoration: none;
+    background-color: #EEEEEE;
+    color: #333333;
+    padding: 2px 6px 2px 6px;
+    border-top: 1px solid #CCCCCC;
+    border-right: 1px solid #333333;
+    border-bottom: 1px solid #333333;
+    border-left: 1px solid #CCCCCC;
+}
 //<!-- button { height: 20px } -->
 
 textarea { width: 500px; height: 80px; }
@@ -51,8 +64,8 @@ textarea { width: 500px; height: 80px; }
     {% endwith %}
 
     {% if not is_staff %}
-    <button class='vote-down' value='-' id='{{ node.pk }}'>-</button>
-    <button class='vote-up' value='+' id='{{ node.pk }}'>+</button>
+    <button class='{% if node.minus_vote %}pressed{% endif %} vote vote-down' value='-' id='{{ node.pk }}'>-</button>
+    <button class='{% if node.plus_vote %}pressed{% endif %} vote vote-up' value='+' id='{{ node.pk }}'>+</button>
     {% endif %}
 
     {% if is_staff %}
@@ -65,8 +78,8 @@ textarea { width: 500px; height: 80px; }
             <button class='add-node' id='{{ node.pk }} 'href="{% url 'create_update_node' page.pk node.pk %}after/">{% if not forloop.last %}Insert {% endif %}New Node</button>
             <button class='clear-score' id='{{ node.pk }}'>Clear Score</button>
 
-            {% if not forloop.last %}<button class='down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</button> {% endif %}
-            {% if not forloop.first %}<button class='up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</button> {% endif %}
+            {% if not forloop.last %}<a class='button move-down' href="{% url 'move_node' page.pk node.pk 'down' %}">↓</a> {% endif %}
+            {% if not forloop.first %}<a class='button move-up' href="{% url 'move_node' page.pk node.pk 'up' %}">↑</a> {% endif %}
         </div>
     </div>
     {% endif %}

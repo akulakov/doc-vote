@@ -4,18 +4,20 @@ from django.urls import path
 
 from django.contrib.auth import views as auth_views
 
+from django.views.decorators.cache import cache_page
+
 from . import views
 
 urlpatterns = [
     path('', views.MainRedirectView.as_view(), name='main_redirect'),
-    path('<int:pk>/', views.PageView.as_view(), name='page'),
+    path('<int:pk>/', cache_page(5*60)(views.PageView.as_view()), name='page'),
 
     # path('/vote/', views.VoteView.as_view(), name='vote'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, dict(next_page='/'), name='logout'),
 
     path('<int:page_pk>/vote/<int:pk>/<int:plus>/', views.VoteView.as_view(), name='vote'),
-    path('<int:page_pk>/vote/<int:pk>/<str:dir>/', views.MoveNodeView.as_view(), name='move_node'),
+    path('<int:page_pk>/move/<int:pk>/<str:dir>/', views.MoveNodeView.as_view(), name='move_node'),
 
     path('ajax-node/<int:pk>/', views.AjaxNodeView.as_view(), name='ajax_node'),
     path('ajax-node/<int:pk>/clear-score/', views.ClearScoreView.as_view(), name='clear_score'),

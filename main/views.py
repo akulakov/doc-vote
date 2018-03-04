@@ -18,10 +18,10 @@ from django.contrib.auth.decorators import login_required
 from .models import Page, Vote, Node, Comment
 from .forms import CommentForm
 
-vote_links = """
-<a href='{minus_url}' class='{minus_class}'>-</a>
-<a href='{plus_url}' class='{plus_class}'>+</a>
-"""
+# vote_links = """
+# <a href='{minus_url}' class='{minus_class}'>-</a>
+# <a href='{plus_url}' class='{plus_class}'>+</a>
+# """
 
 class PermissionError(Exception):
     pass
@@ -49,12 +49,10 @@ class PageView(DetailView):
                                                    page_pk=self.object.pk,
                                                    plus=1))
 
-            if not user_vote:
-                node.vote_links = vote_links.format(minus_class='', plus_class='', minus_url=minus_url, plus_url=plus_url)
-            elif user_vote.plus:
-                node.vote_links = vote_links.format(minus_class='', plus_class='selected', minus_url=minus_url, plus_url=plus_url)
-            elif not user_vote.plus:
-                node.vote_links = vote_links.format(minus_class='selected', plus_class='', minus_url=minus_url, plus_url=plus_url)
+            if user_vote and user_vote.plus:
+                node.plus_vote = True
+            elif user_vote and not user_vote.plus:
+                node.minus_vote = True
 
             nodes.append(node)
         kwargs.update(dict(nodes=nodes,
