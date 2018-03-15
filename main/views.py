@@ -9,19 +9,24 @@ from django.views.generic import (DetailView, UpdateView, DeleteView, FormView, 
 from django.views.generic.detail import SingleObjectMixin
 
 from django.http import JsonResponse
+from django.http import HttpRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.template import loader, Context
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.utils.cache import get_cache_key
 
 from .models import Page, Vote, Node, Comment
 from .forms import CommentForm
 
-# vote_links = """
-# <a href='{minus_url}' class='{minus_class}'>-</a>
-# <a href='{plus_url}' class='{plus_class}'>+</a>
-# """
+def expire_page(path):
+    request = HttpRequest()
+    request.path = path
+    key = get_cache_key(request)
+    if cache.has_key(key):
+        cache.delete(key)
 
 class PermissionError(Exception):
     pass

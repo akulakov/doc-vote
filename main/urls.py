@@ -10,9 +10,8 @@ from . import views
 
 urlpatterns = [
     path('', views.MainRedirectView.as_view(), name='main_redirect'),
-    path('<int:pk>/', cache_page(5*60)(views.PageView.as_view()), name='page'),
+    path('<int:pk>/', cache_page(0*60)(views.PageView.as_view()), name='page'),
 
-    # path('/vote/', views.VoteView.as_view(), name='vote'),
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, dict(next_page='/'), name='logout'),
 
